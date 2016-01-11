@@ -1,20 +1,19 @@
 5:
-  lines_per_method: 10
+  lines_per_method: 7
   line_length: 80
   max_nesting_depth: 2
-  methods_per_class: 16
+  methods_per_class: 18
   no_semicolons: true
   no_trailing_whitespace: true
   check_syntax: true
   no_global_variables: true
   naming_conventions: true
   max_method_arity: 4
-  spaces_around_operators: true
 6:
-  lines_per_method: 10
+  lines_per_method: 8
   line_length: 85
   max_nesting_depth: 2
-  methods_per_class: 10
+  methods_per_class: 8
   no_semicolons: true
   no_trailing_whitespace: true
   check_syntax: true
@@ -46,5 +45,5 @@
   no_global_variables: true
   english_words_for_names: ''
   naming_conventions: true
-  max_method_arity: 4
+  max_method_arity: 3
   spaces_around_operators: true
