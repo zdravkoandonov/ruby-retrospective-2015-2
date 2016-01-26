@@ -14,7 +14,7 @@ class Spreadsheet
   def cell_at(cell_index)
     cell_index.match(/\A(?<column>[[:upper:]]+)(?<row>\d+)\Z/) do |match|
       row, column = match["row"].to_i - 1, column_to_index(match["column"])
-      if row > @table.size or column > @table[0].size
+      if empty? or row > @table.size or column > @table[0].size
         raise Error, "Cell '#{cell_index}' does not exist"
       else
         return @table[row][column]
@@ -106,7 +106,7 @@ class Spreadsheet
 
   class Expression
     ARGUMENT = /((\d+(\.\d+)?)|([[:upper:]]+\d+))/
-    FUNCTION = /[[:upper:]]+\(#{ARGUMENT}(\s*,\s*#{ARGUMENT})*\)/
+    FUNCTION = /[[:upper:]]+\((#{ARGUMENT}(\s*,\s*#{ARGUMENT})*)?\)/
 
     attr_accessor :value
 
@@ -138,7 +138,7 @@ class Spreadsheet
     end
 
     def calculate_valid_function_from_string(expression)
-      function = /(?<name>[[:upper:]]+)\((?<arguments>.+)\)/.match(expression)
+      function = /(?<name>[[:upper:]]+)\((?<arguments>.*)\)/.match(expression)
       calculate_function(function[:name], function[:arguments])
     end
 
