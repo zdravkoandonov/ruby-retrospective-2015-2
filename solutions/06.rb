@@ -77,13 +77,14 @@ module TurtleGraphics
     def initialize(rows, columns)
       @rows = rows
       @columns = columns
-      @turtle = [0, 0]
-      @direction = ORIENTATIONS[:right]
+      @x = 0
+      @y = 0
+      @direction_x, @direction_y = ORIENTATIONS[:right]
       @canvas = Array.new(rows) { Array.new(columns, 0) }
     end
 
     def draw(output = nil)
-      @canvas[@turtle[1]][@turtle[0]] += 1
+      @canvas[@y][@x] += 1
       self.instance_eval(&Proc.new)
       if (output)
         output.build(@canvas)
@@ -93,27 +94,27 @@ module TurtleGraphics
     end
 
     def move
-      @turtle[0] = (@turtle[0] + @direction[0]) % @rows
-      @turtle[1] = (@turtle[1] + @direction[1]) % @columns
-      @canvas[@turtle[0]][@turtle[1]] += 1
+      @x = (@x + @direction_x) % @rows
+      @y = (@y + @direction_y) % @columns
+      @canvas[@x][@y] += 1
     end
 
     def turn_left
-      @direction = [-@direction[1], @direction[0]]
+      @direction_x, @direction_y = [-@direction_y, @direction_x]
     end
 
     def turn_right
-      @direction = [@direction[1], - @direction[0]]
+      @direction_x, @direction_y = [@direction_y, - @direction_x]
     end
 
     def spawn_at(row, column)
-      @canvas[@turtle[0]][@turtle[1]] -= 1
-      @turtle = [row, column]
-      @canvas[@turtle[0]][@turtle[1]] += 1
+      @canvas[@x][@y] -= 1
+      @x, @y = row, column
+      @canvas[@x][@y] += 1
     end
 
     def look(orientation)
-      @direction = ORIENTATIONS[orientation]
+      @direction_x, @direction_y = ORIENTATIONS[orientation]
     end
   end
 end
