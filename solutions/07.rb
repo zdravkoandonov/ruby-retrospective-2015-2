@@ -43,7 +43,7 @@ module LazyMode
     end
 
     def days_difference(other)
-      (days - other.days).abs
+      days - other.days
     end
   end
 
@@ -85,9 +85,8 @@ module LazyMode
       dates_this_week = Array.new(7, date_today).zip(0..6).map do |date, days|
         date.add_days(days)
       end
-      notes = dates_this_week.map { |date|
-        daily_agenda(date).notes }.reduce(:+)
-      Agenda.new(notes)
+      notes_this_week = dates_this_week.map { |date| daily_agenda(date).notes }
+      Agenda.new(notes_this_week.reduce(:+))
     end
   end
 
@@ -120,6 +119,10 @@ module LazyMode
     end
 
     def with_date(date_scheduled)
+      dup.with_date!(date_scheduled)
+    end
+
+    def with_date!(date_scheduled)
       @date = date_scheduled
       self
     end
@@ -139,10 +142,11 @@ module LazyMode
     end
 
     def scheduled_for_today?(date)
+      time_between_dates = date.days_difference(@date)
       if @repeat_interval
-        @date.days_difference(date) % @repeat_interval == 0
+        time_between_dates >= 0 && time_between_dates % @repeat_interval == 0
       else
-        @date.days_difference(date) == 0
+        time_between_dates == 0
       end
     end
   end
