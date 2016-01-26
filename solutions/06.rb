@@ -1,7 +1,7 @@
 module TurtleGraphics
   class Canvas
     def self.max_steps(canvas)
-      canvas.map { |row| row.max }.max
+      canvas.map(&:max).max
     end
 
     class ASCII
