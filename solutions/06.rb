@@ -49,7 +49,7 @@ module TurtleGraphics
         </head>
         <body>
           <table>
-          %s
+          %{rows}
           </table>
         </body>
         </html>
@@ -66,7 +66,7 @@ module TurtleGraphics
           end
           '<tr>' + table_data.join + '</tr>'
         end
-        @html_string % table_rows.join
+        @html_string % {rows: table_rows.join}
       end
     end
   end
