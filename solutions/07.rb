@@ -42,7 +42,7 @@ module LazyMode
       @year * 12 * 30 + (@month - 1) * 30 + @day
     end
 
-    def days_difference(other)
+    def -(other)
       days - other.days
     end
   end
@@ -142,7 +142,7 @@ module LazyMode
     end
 
     def scheduled_for_today?(date)
-      time_between_dates = date.days_difference(@date)
+      time_between_dates = date - @date
       if @repeat_interval
         time_between_dates >= 0 && time_between_dates % @repeat_interval == 0
       else
