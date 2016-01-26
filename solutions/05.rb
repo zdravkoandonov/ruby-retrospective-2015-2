@@ -62,7 +62,7 @@ class ObjectStore
       removed_object = @stage[name]
       @stage.delete(name)
       @objects_changed += 1
-      Outcome.new("Added #{removed_object} for removal.", true, removed_object)
+      Outcome.new("Added #{name} for removal.", true, removed_object)
     else
       Outcome.new("Object #{name} is not committed.", false)
     end
