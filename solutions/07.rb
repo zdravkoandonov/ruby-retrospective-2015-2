@@ -65,12 +65,25 @@ module LazyMode
 
     class Agenda < Struct.new(:notes)
       def where(status: nil, tag: nil, text: nil)
-        selected_notes = notes.select! do |note|
-          (!tag || note.tags.include?(tag)) &&
-            (!text || note.header.match(text) || note.body.match(text)) &&
-              (!status || note.status == status)
-        end
+        selected_notes = notes.dup
+        filter_by_tag(selected_notes, tag) if tag
+        filter_by_text(selected_notes, text) if text
+        filter_by_status(selected_notes, status) if status
         Agenda.new(selected_notes)
+      end
+
+      private
+
+      def filter_by_tag(notes, tag)
+        notes.select! { |note| note.tags.include?(tag) }
+      end
+
+      def filter_by_text(notes, text)
+        notes.select! { |note| note.header[text] || note.body[text] }
+      end
+
+      def filter_by_status(notes, status)
+        notes.select! { |note| note.status == status }
       end
     end
 
