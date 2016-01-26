@@ -58,14 +58,6 @@ class ObjectStore
     end
   end
 
-  private def create_commit(message, time, hash)
-    new_commit = Commit.new(time, message, hash, @stage.dup)
-    @store[@current_branch] << new_commit
-    outcome_message = "#{message}\n\t#{@objects_changed} objects changed"
-    @objects_changed = 0
-    success(outcome_message, new_commit)
-  end
-
   def get(name)
     last_commit = @store[@current_branch].last
     if last_commit and last_commit.stage.has_key?(name)
@@ -80,10 +72,7 @@ class ObjectStore
     commit_index = @store[@current_branch].
       find_index { |commit| commit.hash == commit_hash }
     if commit_index
-      @store[@current_branch].slice!((commit_index + 1)..-1)
-      @stage = @store[@current_branch].last.stage
-      success("HEAD is now at #{@store[@current_branch].last.hash}.",
-                  @store[@current_branch].last)
+      valid_checkout(commit_index)
     else
       error("Commit #{commit_hash} does not exist.")
     end
@@ -113,6 +102,23 @@ class ObjectStore
 
   def branch()
     Branch.new(self)
+  end
+
+  private
+
+  def create_commit(message, time, hash)
+    new_commit = Commit.new(time, message, hash, @stage.dup)
+    @store[@current_branch] << new_commit
+    outcome_message = "#{message}\n\t#{@objects_changed} objects changed"
+    @objects_changed = 0
+    success(outcome_message, new_commit)
+  end
+
+  def valid_checkout(commit_index)
+    @store[@current_branch].slice!((commit_index + 1)..-1)
+    @stage = @store[@current_branch].last.stage
+    success("HEAD is now at #{@store[@current_branch].last.hash}.",
+                @store[@current_branch].last)
   end
 end
 
@@ -182,12 +188,8 @@ class ObjectStore::Branch
   def checkout(branch_name)
     if @repository.store.has_key?(branch_name.to_sym)
       @repository.current_branch = branch_name.to_sym
-      checkout_branch = @repository.store[@repository.current_branch]
-      if checkout_branch.empty?
-        @repository.stage = {}
-      else
-        @repository.stage = checkout_branch.last.stage
-      end
+      branch = @repository.store[@repository.current_branch]
+      @repository.stage = branch.empty? ? {} : branch.last.stage
       success("Switched to branch #{branch_name}.")
     else
       error("Branch #{branch_name} does not exist.")
